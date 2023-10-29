@@ -1,4 +1,3 @@
-# coding=utf-8
 import logging
 import os
 import re
@@ -7,9 +6,9 @@ from os import mkdir, path
 from queue import Empty
 from shutil import rmtree
 from tempfile import mkdtemp
+from unittest.mock import MagicMock
 
 import pytest
-from mock import MagicMock
 
 extra_plugin_dir = path.join(path.dirname(path.realpath(__file__)), "dummy_plugin")
 
@@ -112,10 +111,11 @@ def test_plugin_cycle(testbot):
     ]
 
     for plugin in plugins:
-        testbot.assertInCommand(
-            f"!repos install {plugin}",
-            f"Installing {plugin}..."
-        ),
+        (
+            testbot.assertInCommand(
+                f"!repos install {plugin}", f"Installing {plugin}..."
+            ),
+        )
         assert (
             "A new plugin repository has been installed correctly from errbotio/err-helloworld"
             in testbot.pop_message(timeout=60)
@@ -207,7 +207,7 @@ def test_backup(testbot):
 
     from errbot.bootstrap import restore_bot_from_backup
 
-    log = logging.getLogger(__name__)  # noqa
+    log = logging.getLogger(__name__)
     restore_bot_from_backup(filename, bot=bot, log=log)
 
     assert "Plugin HelloWorld activated." in testbot.exec_command(
